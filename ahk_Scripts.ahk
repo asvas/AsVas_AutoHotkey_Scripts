@@ -23,62 +23,63 @@
 ;return % G
 ;}
 
+;---------------------------------------------------------------------------------
 ;Run Function - Running specific executable
-F_Run(Target)
+F_Run(Target,TPath = 0)
 {
-Run, %Target% ;Command for running target
+if TPath = 0 
+	Run, %Target%
+else
+	Run, %TPath% ;Command for running target if conditions are satisfied
 }
 
+;---------------------------------------------------------------------------------
 ;Switch Function - Switching between different instances of the same executable or running it if missing
-F_SwitchA(Target,TClass,TGroup)
+F_Switch(Target,TClass,TGroup,TPath = 0)
 {
-IfWinNotExist, ahk_exe %Target% ;Checking state of existence
+IfWinExist, ahk_exe %Target% ;Checking state of existence
 	{
-	Run, %Target% ;Command for running target if conditions are satisfied
-	}
-else
-	{
-	GroupAdd, TGroup, %TClass% ;Definition of the group (grouping all instance of this class) (Not the perfect spot as make fo unnecessary reapeats of the command with every cycle, however the only easy option to keep the group up to date with the introduction of new instances)
-	if WinActive("ahk_exe %Target%") ;Status check for active window if belong to the same instance of the "Target"
-		GroupActivate, TGroup, r ;If the condition is met cycle between targets belonging to the group
+	GroupAdd, %TGroup%, %TClass% ;Definition of the group (grouping all instance of this class) (Not the perfect spot as make fo unnecessary reapeats of the command with every cycle, however the only easy option to keep the group up to date with the introduction of new instances)
+	if WinActive "%TClass%" ;Status check for active window if belong to the same instance of the "Target"
+		{
+		GroupActivate, %TGroup%, r ;If the condition is met cycle between targets belonging to the group
+		}
 	else
 		WinActivate %TClass% ;you have to use WinActivatebottom if you didn't create a window group.
 	}
+else
+	{
+	if TPath = 0 
+		Run, %Target%
+	else
+		Run, %TPath% ;Command for running target if conditions are satisfied
+	}
 Return
 }
 
-;Switch Function - Switching between different instances of the same executable or running it if missing
-F_Switch(Target,TClass,TGroup,TExe)
+;--------------------------------------------------------------------------------
+F_Activate(Target,TClass,TPath = 0)
 {
-IfWinNotExist, ahk_exe %Target% ;Checking state of existence
+IfWinExist, ahk_exe %Target%
 	{
-	Run, %Target% ;Command for running target if conditions are satisfied
+	If WinActive "%TClass%"
+		WinMinimize
+	else
+		WinActivate ahk_exe %Target%
 	}
 else
 	{
-	GroupAdd, TGroup, %TClass% ;Definition of the group (grouping all instance of this class) (Not the perfect spot as make fo unnecessary reapeats of the command with every cycle, however the only easy option to keep the group up to date with the introduction of new instances)
-	if WinActive("%TExe%") ;Status check for active window if belong to the same instance of the "Target"
-		GroupActivate, TGroup, r ;If the condition is met cycle between targets belonging to the group
-	else
-		WinActivate %TClass% ;you have to use WinActivatebottom if you didn't create a window group.
+	Run, %A_AppData%%TPath%
 	}
 Return
 }
-
-F_Test(Target)
-{
-msgbox  "ahk_exe %Target%"
-Return
-}
-
-
 
 #if (getKeyState("F12", "P"))
 F12::return
 
 	;F-key row
 F1::Reload
-F2::F_Test("WINWORD.EXE")
+F2::F_Activate("spotify.exe","ahk_class SpotifyMainWindow","\Spotify\Spotify.exe")
 F3::
 F4::
 F5::
@@ -92,46 +93,18 @@ F11::
 
 	;Number row
 `::
-1::F_Switch("dopus.exe","ahk_class dopus.lister","opusgroup","ahk_class dopus.exe")
+1::F_Switch("dopus.exe","ahk_class dopus.lister","opusgroup")
 +1::F_Run("dopus.exe")
-2::F_Switch("chrome.exe","ahk_class Chrome_WidgetWin_1","chromegroup","ahk_class chrome.exe")
+2::F_Switch("chrome.exe","ahk_class Chrome_WidgetWin_1","chromegroup")
 +2::F_Run("chrome.exe")
-3::F_Switch("WINWORD.EXE","ahk_class OpusApp","wordgroup","ahk_class WINWORD.EXE")
-+3::F_Run("WINWORD.EXE")
-4::F_Switch("EXCEL.EXE","ahk_class XLMAIN","excelgroup","ahk_class EXCEL.EXE")
+3::F_Switch("WINWORD.EXE","ahk_class OpusApp","wordgroup","C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
++3::F_Run("WINWORD.EXE","C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
+4::F_Switch("EXCEL.EXE","ahk_class XLMAIN","excelgroup")
 +4::F_Run("EXCEL.EXE")
 
 
 5::
-IfWinNotExist, ahk_exe WINWORD.EXE
-	{
-	Run, WINWORD.EXE
-	}
-else
-	{
-	GroupAdd, wordgroup, ahk_class OpusApp
-	if WinActive("ahk_exe WINWORD.EXE")
-		GroupActivate, wordgroup, r
-	else
-		WinActivate ahk_class OpusApp
-	}
-Return
-
 6::
-IfWinNotExist, ahk_exe EXCEL.EXE
-	{
-	Run, EXCEL.EXE
-	}
-else
-	{
-	GroupAdd, excelgroup, ahk_class XLMAIN
-	if WinActive("ahk_exe EXCEL.EXE")
-		GroupActivate, excelgroup, r
-	else
-		WinActivate ahk_class XLMAIN
-	}
-Return
-
 +6::
 7::
 8::
@@ -216,7 +189,21 @@ end::
 pgdn::
 
 up::
-down::
+{
+IfWinExist, ahk_exe spotify.exe
+	{
+	If WinActive("ahk_class SpotifyMainWindow")
+		WinMinimize
+	else
+		WinActivate ahk_exe spotify.exe
+	}
+else
+	{
+	Run, %A_AppData%\Spotify\Spotify.exe
+	}
+Return
+}
+down::Media_Play_Pause
 left::Media_Prev
 right::Media_Next
 
