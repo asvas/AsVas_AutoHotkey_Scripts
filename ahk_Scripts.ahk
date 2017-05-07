@@ -10,18 +10,7 @@
 ;msgbox % ProgramsDB[Target][RequestsDB[Request]]
 ;}
 
-;F_DB(DBTarget)
-;{
-;ProgramsDB:={}
-;ProgramsDB["DirectoryOpus"]:=["dopus.exe","ahk_class dopus.lister","opusgroup"]
-;ProgramsDB["Chromium"]:=["chrome.exe","ahk_class Chrome_WidgetWin_1","chromegroup"]
-;T:= % ProgramsDB[DBTarget][1]
-;return % T
-;C:= % ProgramsDB[DBTarget][2]
-;return % C
-;G:= StrReplace(T, ".exe") "group"
-;return % G
-;}
+
 
 ;---------------------------------------------------------------------------------
 ;Run Function - Running specific executable
@@ -40,7 +29,7 @@ F_Switch(Target,TClass,TGroup,TPath = 0)
 IfWinExist, ahk_exe %Target% ;Checking state of existence
 	{
 	GroupAdd, %TGroup%, %TClass% ;Definition of the group (grouping all instance of this class) (Not the perfect spot as make fo unnecessary reapeats of the command with every cycle, however the only easy option to keep the group up to date with the introduction of new instances)
-	if WinActive "%TClass%" ;Status check for active window if belong to the same instance of the "Target"
+	ifWinActive %TClass% ;Status check for active window if belong to the same instance of the "Target"
 		{
 		GroupActivate, %TGroup%, r ;If the condition is met cycle between targets belonging to the group
 		}
@@ -58,11 +47,11 @@ Return
 }
 
 ;--------------------------------------------------------------------------------
-F_Activate(Target,TClass,TPath = 0)
+F_Activate(Target,TPath = 0)
 {
 IfWinExist, ahk_exe %Target%
 	{
-	If WinActive "%TClass%"
+	IfWinActive ahk_exe %Target%
 		WinMinimize
 	else
 		WinActivate ahk_exe %Target%
@@ -74,12 +63,39 @@ else
 Return
 }
 
+;--------------------------------------------------------------------------------
+F_Translate()
+{
+Input Key1, L1
+Input Key2, L1
+DicDB:=[]
+DicDB["b"]:="bg"
+DicDB["e"]:="en"
+DicDB["d"]:="da"
+DicDB["g"]:="de"
+Code = % DicDB[Key1] "/" DicDB[Key2]
+run, "https://translate.google.bg/?source=osdd#%Code%"
+return
+}
+
+;--------------------------------------------------------------------------------
+F_TranSelected()
+{
+Send, ^c
+Run, "https://translate.google.bg/?source=osdd#auto/bg/%clipboard%"
+Return
+}
+;--------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------
+
 #if (getKeyState("F12", "P"))
 F12::return
 
 	;F-key row
+esc::!F4
 F1::Reload
-F2::F_Activate("spotify.exe","ahk_class SpotifyMainWindow","\Spotify\Spotify.exe")
+F2::
 F3::
 F4::
 F5::
@@ -157,7 +173,7 @@ m::
 ,::
 .::
 /::
-Rshift::
+;Rshift::
 
 
 	;Space row
@@ -168,7 +184,8 @@ space::
 Ralt::
 Rwin::
 appskey::
-Rctrl::
+Rctrl::F_TranSelected()
++Rctrl::F_Translate()
 
 	;Arrow section
 PrintScreen::
@@ -188,21 +205,7 @@ delete::
 end::
 pgdn::
 
-up::
-{
-IfWinExist, ahk_exe spotify.exe
-	{
-	If WinActive("ahk_class SpotifyMainWindow")
-		WinMinimize
-	else
-		WinActivate ahk_exe spotify.exe
-	}
-else
-	{
-	Run, %A_AppData%\Spotify\Spotify.exe
-	}
-Return
-}
+up::F_Activate("spotify.exe","\Spotify\Spotify.exe")
 down::Media_Play_Pause
 left::Media_Prev
 right::Media_Next
