@@ -1,4 +1,6 @@
 
+;Menu, Tray, Icon, shell32.dll, 174
+
 ;Database functions for better structurization of the manipulated software (the functions that the database is usefull for are reputable. Therefore not optimal that the functions will go true the DB every time.
 ;F_DBa(Target, Request)
 ;{
@@ -95,7 +97,7 @@ F12::return
 	;F-key row
 esc::!F4
 F1::Reload
-F2::
+F2::PostMessage, 0x50, 0,0x1000,, A
 F3::
 F4::
 F5::
