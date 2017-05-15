@@ -141,8 +141,8 @@ e::F_Switch("EXCEL.EXE","ahk_class XLMAIN","excelgroup")
 r::
 t::
 y::Run, "https://www.youtube.com/feed/subscriptions"
-u::
-i::
+u::Run, "https://trakt.tv/dashboard"
+i::Run, "http://www.imdb.com/"
 o::
 p::
 [::
@@ -185,9 +185,9 @@ Run, "https://mail.google.com/mail/u/0/#inbox"
 Run, "https://outlook.live.com/owa/"
 return
 }
-,::F_Switch("lync.exe","ahk_class CommunicatorMainWindowClass","lyncgroup")
+,::F_Switch("lync.exe","ahk_class LyncConversationWindowClass","lyncgroup")
 +,::F_Run("lync.exe")
-.::F_Switch("skype.exe","ahk_class tSkMainForm","skypegroup")
+.::F_Switch("skype.exe","ahk_class TConversationForm","skypegroup")
 +.::F_Run("skype.exe")
 /::
 ;Rshift::
