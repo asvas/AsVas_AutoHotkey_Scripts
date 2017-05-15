@@ -60,7 +60,10 @@ IfWinExist, ahk_exe %Target%
 	}
 else
 	{
-	Run, %A_AppData%%TPath%
+	if TPath = 0 
+		Run, %Target%
+	else
+		Run, %A_AppData%%TPath%
 	}
 Return
 }
@@ -76,7 +79,7 @@ DicDB["e"]:="en"
 DicDB["d"]:="da"
 DicDB["g"]:="de"
 Code = % DicDB[Key1] "/" DicDB[Key2]
-run, "https://translate.google.bg/?source=osdd#%Code%"
+Run, "https://translate.google.bg/?source=osdd#%Code%"
 return
 }
 
@@ -91,18 +94,18 @@ Return
 ;--------------------------------------------------------------------------------
 ;--------------------------------------------------------------------------------
 
-#if (getKeyState("F12", "P"))
-F12::return
+#if (getKeyState("F23", "P"))
+F23::return
 
 	;F-key row
-esc::!F4
-F1::Reload
-F2::PostMessage, 0x50, 0,0x1000,, A
-F3::
-F4::
+esc::Reload
+F1::SoundSet, 15
+F2::SoundSet, 33
+F3::SoundSet, 66
+F4::SoundSet, 100
 F5::
 F6::
-F7::
+F7::msgbox, ha
 F9::
 F8::
 F10::
@@ -110,17 +113,13 @@ F11::
 ;F12:: ;Temporary disabled
 
 	;Number row
-`::
-1::F_Switch("dopus.exe","ahk_class dopus.lister","opusgroup")
-+1::F_Run("dopus.exe")
-2::F_Switch("chrome.exe","ahk_class Chrome_WidgetWin_1","chromegroup")
-+2::F_Run("chrome.exe")
-3::F_Switch("WINWORD.EXE","ahk_class OpusApp","wordgroup","C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
-+3::F_Run("WINWORD.EXE","C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
-4::F_Switch("EXCEL.EXE","ahk_class XLMAIN","excelgroup")
-+4::F_Run("EXCEL.EXE")
-
-
+`::PostMessage 0x50, 0, 0x0000,, A
+1::PostMessage 0x50, 0, 0x0409,, A
+2::PostMessage 0x50, 0, 0x0402,, A
+3::
++3::
+4::
++4::
 5::
 6::
 +6::
@@ -128,52 +127,68 @@ F11::
 8::
 9::
 0::
-
 -::
 =::
 
 	;QWE row
 tab::
 q::
-w::
-e::
++q::
+w::F_Switch("WINWORD.EXE","ahk_class OpusApp","wordgroup") ;,"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
++w::F_Run("WINWORD.EXE") ;,"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
+e::F_Switch("EXCEL.EXE","ahk_class XLMAIN","excelgroup")
++e::F_Run("EXCEL.EXE")
 r::
 t::
-y::
+y::Run, "https://www.youtube.com/feed/subscriptions"
 u::
 i::
 o::
 p::
 [::
 ]::
-\::
 
 	;ASD row
 capslock::
-a::
-s::
-d::
+a::F_Switch("acad.exe","ahk_class AfxMDIFrame110u","acadgroup","C:\Program Files\Autodesk\AutoCAD 2016\acad.exe")
++a::F_Run("acad.exe","C:\Program Files\Autodesk\AutoCAD 2016\acad.exe")
+s::F_Switch("powercivil.exe","ahk_class MstnTop","microstationgroup","C:\Program Files (x86)\Bentley\PowerCivil V8i (SELECTSeries 3)\PowerCivil\powercivil.exe")
++s::F_Run("powercivil.exe","C:\Program Files (x86)\Bentley\PowerCivil V8i (SELECTSeries 3)\PowerCivil\powercivil.exe")
+d::F_Switch("PaintDotNet.exe","ahk_class WindowsForms10.Window.8.app.0.34f5582_r12_ad1","paintnetgroup","C:\Program Files\paint.net\PaintDotNet.exe")
++d::F_Run("PaintDotNet.exe","C:\Program Files\paint.net\PaintDotNet.exe")
 f::
 g::
-h::
-j::
-k::
-l::
+h::Run, "https://r.ekj.dk/Citrix/ekjWeb/"
+j::Run, "https://outlook.live.com/owa/"
+k::Run, "https://mail.google.com/mail/u/0/#inbox"
+l::Run, "https://www.abv.bg/"
 `;::
 '::
 enter::
 
 	;ZXC row
 ;Lshift::
-z::
-x::
-c::
+z::F_Switch("dopus.exe","ahk_class dopus.lister","opusgroup")
++z::F_Run("dopus.exe")
+x::F_Switch("firefox.exe","ahk_class MozillaWindowClass","firefoxgroup","C:\Program Files (x86)\Mozilla Firefox\firefox.exe")
++x::F_Run("firefox.exe","C:\Program Files (x86)\Mozilla Firefox\firefox.exe")
+c::F_Switch("chrome.exe","ahk_class Chrome_WidgetWin_1","chromegroup")
++c::F_Run("chrome.exe")
 v::
 b::
 n::
-m::
-,::
-.::
+m::F_Activate("OUTLOOK.EXE")
++m::
+{
+Run, "https://www.abv.bg/"
+Run, "https://mail.google.com/mail/u/0/#inbox"
+Run, "https://outlook.live.com/owa/"
+return
+}
+,::F_Switch("lync.exe","ahk_class CommunicatorMainWindowClass","lyncgroup")
++,::F_Run("lync.exe")
+.::F_Switch("skype.exe","ahk_class tSkMainForm","skypegroup")
++.::F_Run("skype.exe")
 /::
 ;Rshift::
 
@@ -186,8 +201,7 @@ space::
 Ralt::
 Rwin::
 appskey::
-Rctrl::F_TranSelected()
-+Rctrl::F_Translate()
+Rctrl::
 
 	;Arrow section
 PrintScreen::
@@ -203,9 +217,9 @@ insert::
 home::
 pgup::
 
-delete::
-end::
-pgdn::
+delete::SoundSet, 33
+end::SoundSet, 66
+pgdn::SoundSet, 100
 
 up::F_Activate("spotify.exe","\Spotify\Spotify.exe")
 down::Media_Play_Pause
@@ -213,7 +227,9 @@ left::Media_Prev
 right::Media_Next
 
 	;Numpad section
-numpad0::
+numpadDot::F_Translate()
+
+numpad0::F_TranSelected()
 numpad1::
 numpad2::
 numpad3::
@@ -232,7 +248,7 @@ numpadSub::
 numpadAdd::
 numpadEnter::
 
-numpadDot::
+
 
 
 #if
