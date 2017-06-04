@@ -13,6 +13,28 @@
 ;}
 
 
+;---------------------------------------------------------------------------------
+;Function for hiding/Showing the intercept.exe window
+F_Intercept_visibility()
+{
+IfWinActive ahk_exe intercept.exe
+	WinHide ahk_exe intercept.exe
+else
+	WinShow ahk_exe intercept.exe
+return
+}
+
+;---------------------------------------------------------------------------------
+;Function for running intercept.exe
+F_Intercept_run()
+{
+Run, intercept.exe
+Sleep 250
+WinActivate ahk_exe intercept.exe
+send y
+WinHide ahk_exe intercept.exe
+return
+}
 
 ;---------------------------------------------------------------------------------
 ;Run Function - Running specific executable
@@ -90,63 +112,96 @@ Send, ^c
 Run, "https://translate.google.bg/?source=osdd#auto/bg/%clipboard%"
 Return
 }
+
+;--------------------------------------------------------------------------------
+F_Wiki()
+{
+Input Key1, L1
+DicDB:=[]
+DicDB["b"]:="bg"
+DicDB["e"]:="en"
+DicDB["d"]:="da"
+DicDB["g"]:="de"
+Code = % DicDB[Key1]
+Run, "https://%Code%.wikipedia.org/wiki/Main_Page"
+return
+}
+
+;--------------------------------------------------------------------------------
+F_Pass()
+{
+send vtn
+sleep 5
+send `t
+sleep 5
+sendraw ittosadosadnici!2017Q1
+return
+}
+
+
 ;--------------------------------------------------------------------------------
 ;--------------------------------------------------------------------------------
 ;--------------------------------------------------------------------------------
+
+
 
 #if (getKeyState("F23", "P"))
 F23::return
 
 	;F-key row
-esc::Reload
+esc::F_Activate("taskmgr.exe")
++esc::Reload
 F1::SoundSet, 15
 F2::SoundSet, 33
 F3::SoundSet, 66
 F4::SoundSet, 100
-F5::
-F6::
-F7::msgbox, ha
-F9::
-F8::
-F10::
-F11::
-;F12:: ;Temporary disabled
+F5::Return
+F6::Return
+F7::Return
+F9::Return
+F8::Return
+F10::Return
+F11::Return
+F12::Return
 
 	;Number row
 `::PostMessage 0x50, 0, 0x0000,, A
 1::PostMessage 0x50, 0, 0x0409,, A
 2::PostMessage 0x50, 0, 0x0402,, A
-3::
-+3::
-4::
-+4::
-5::
-6::
-+6::
-7::
-8::
-9::
-0::
--::
-=::
+3::Return
++3::Return
+4::Return
++4::Return
+5::Return
+6::Return
++6::Return
+7::Return
+8::Return
+9::Return
+0::Return
+-::Return
+=::Return
 
 	;QWE row
 tab::
-q::
-+q::
+q::Run, "https://r.ekj.dk/Citrix/ekjWeb/"
+!q::F_Pass()
 w::F_Switch("WINWORD.EXE","ahk_class OpusApp","wordgroup") ;,"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
 +w::F_Run("WINWORD.EXE") ;,"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk")
 e::F_Switch("EXCEL.EXE","ahk_class XLMAIN","excelgroup")
 +e::F_Run("EXCEL.EXE")
-r::
-t::
-y::Run, "https://www.youtube.com/feed/subscriptions"
-u::Run, "https://trakt.tv/dashboard"
-i::Run, "http://www.imdb.com/"
-o::
-p::
-[::
-]::
+r::F_Switch("mathcad.exe","ahk_exe mathcad.exe","mathcadgroup") ;ahk_exe used as class
++r::F_Run("mathcad.exe")
+t::F_Switch("robot.EXE","ahk_class RoboBATRobot97","robotgroup","C:\Program Files\Autodesk\Autodesk Robot Structural Analysis Professional 2016\System\Exe\robot.EXE")
++t::F_Run("robot.EXE","C:\Program Files\Autodesk\Autodesk Robot Structural Analysis Professional 2016\System\Exe\robot.EXE")
+y::F_Switch("Lusas_M.exe","ahk_exe Lusas_M.exe","lusasgroup","C:\LUSAS152\Programs\Lusas_M.exe") ;ahk_exe used as class
++y::F_Run("Lusas_M.exe","C:\LUSAS152\Programs\Lusas_M.exe")
+u::Return
+i::Return
+o::F_Wiki()
+p::Run, "https://duckduckgo.com/"
+[::Run, "https://www.google.com"
+]::Run, "https://www.google.com/maps/"
 
 	;ASD row
 capslock::
@@ -154,29 +209,31 @@ a::F_Switch("acad.exe","ahk_class AfxMDIFrame110u","acadgroup","C:\Program Files
 +a::F_Run("acad.exe","C:\Program Files\Autodesk\AutoCAD 2016\acad.exe")
 s::F_Switch("powercivil.exe","ahk_class MstnTop","microstationgroup","C:\Program Files (x86)\Bentley\PowerCivil V8i (SELECTSeries 3)\PowerCivil\powercivil.exe")
 +s::F_Run("powercivil.exe","C:\Program Files (x86)\Bentley\PowerCivil V8i (SELECTSeries 3)\PowerCivil\powercivil.exe")
-d::F_Switch("PaintDotNet.exe","ahk_class WindowsForms10.Window.8.app.0.34f5582_r12_ad1","paintnetgroup","C:\Program Files\paint.net\PaintDotNet.exe")
-+d::F_Run("PaintDotNet.exe","C:\Program Files\paint.net\PaintDotNet.exe")
-f::
+d::F_Switch("Revit.exe","ahk_exe Revit.exe","revitgroup","C:\Program Files\Autodesk\Revit 2016\Revit.exe") ;ahk_exe used as class
++d::F_Run("Revit.exe","C:\Program Files\Autodesk\Revit 2016\Revit.exe")
+f::F_Activate("PaintDotNet.exe","\Microsoft\Internet Explorer\Quick Launch\User Pinned\StartMenu\paint.net.lnk")
++f::F_Run("PaintDotNet.exe","C:\Program Files\paint.net\PaintDotNet.exe")
+!f::F_Run("mspaint.exe")
 g::
-h::Run, "https://r.ekj.dk/Citrix/ekjWeb/"
-j::Run, "https://outlook.live.com/owa/"
-k::Run, "https://mail.google.com/mail/u/0/#inbox"
-l::Run, "https://www.abv.bg/"
-`;::
-'::
-enter::
+h::Run, "https://outlook.live.com/owa/"
+j::Run, "https://mail.google.com/mail/u/0/#inbox"
+k::Run, "https://www.abv.bg/"
+l::Run, "https://www.youtube.com/feed/subscriptions"
+`;::Run, "https://trakt.tv/dashboard"
+'::Run, "http://www.imdb.com/"
+enter::Return
 
 	;ZXC row
-;Lshift::
+;;Lshift::
 z::F_Switch("dopus.exe","ahk_class dopus.lister","opusgroup")
 +z::F_Run("dopus.exe")
 x::F_Switch("firefox.exe","ahk_class MozillaWindowClass","firefoxgroup","C:\Program Files (x86)\Mozilla Firefox\firefox.exe")
 +x::F_Run("firefox.exe","C:\Program Files (x86)\Mozilla Firefox\firefox.exe")
 c::F_Switch("chrome.exe","ahk_class Chrome_WidgetWin_1","chromegroup")
 +c::F_Run("chrome.exe")
-v::
-b::
-n::
+v::Return
+b::Return
+n::Run, "https://m.ekj.dk/owa/"
 m::F_Activate("OUTLOOK.EXE")
 +m::
 {
@@ -189,37 +246,48 @@ return
 +,::F_Run("lync.exe")
 .::F_Switch("skype.exe","ahk_class TConversationForm","skypegroup")
 +.::F_Run("skype.exe")
-/::
-;Rshift::
+/::F_Switch("Viber.exe","ahk_class Qt5QWindowOwnDCIcon","vibergroup","C:\Users\VTN\AppData\Local\Viber\Viber.exe")
++/::F_Run("Viber.exe","C:\Users\VTN\AppData\Local\Viber\Viber.exe")
+;;Rshift::
 
 
 	;Space row
-Lctrl::
-Lwin::
-Lalt::
+;;Lctrl::
+;;Lwin::
+;;Lalt::
 space::
-Ralt::
-Rwin::
-appskey::
-Rctrl::
+{
+Run, "C:\Users\VTN\Desktop\For Kalin.PNG"
+Sleep 1000
+msgbox, "КАЛИНЕ, МАХАЙ СЕ!" 
+Sleep 1000
+msgbox, "АРЕ, МАХАЙ СЕ БЕ!" 
+Return
+}
+;;Ralt::
+;;Rwin::
+;;appskey::
+;;Rctrl::
 
 	;Arrow section
-PrintScreen::
-ScrollLock::
-SC061::
+PrintScreen::Run, AU3_Spy.exe
++PrintScreen::F_Intercept_visibility()
+^PrintScreen::Reload
+ScrollLock::Return
+SC061::Return
 
-CtrlBreak::
-pause::
-Break::
-SC045::
+CtrlBreak::Return
+pause::Return
+Break::Return
+SC045::Return
 
-insert::
-home::
-pgup::
+insert::Return
+home::Return
+pgup::Return
 
-delete::SoundSet, 33
-end::SoundSet, 66
-pgdn::SoundSet, 100
+delete::Return
+end::Return
+pgdn::Return
 
 up::F_Activate("spotify.exe","\Spotify\Spotify.exe")
 down::Media_Play_Pause
@@ -230,26 +298,35 @@ right::Media_Next
 numpadDot::F_Translate()
 
 numpad0::F_TranSelected()
-numpad1::
-numpad2::
-numpad3::
-numpad4::
-numpad5::
-numpad6::
-numpad7::
-numpad8::
-numpad9::
+numpad1::Return
+numpad2::Return
+numpad3::Return
+numpad4::Return
+numpad5::Return
+numpad6::Return
+numpad7::Return
+numpad8::Return
+numpad9::Return
 
-numlock::
-numpadDiv::
-numpadMult::
+numlock::Return
+numpadDiv::Return
+numpadMult::Return
 
-numpadSub::
-numpadAdd::
-numpadEnter::
+numpadSub::Return
+numpadAdd::Return
+numpadEnter::Return
 
 
 
 
 #if
 return
+
+
+
+;--------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------
+
+
++Lwin::F_Intercept_run()
