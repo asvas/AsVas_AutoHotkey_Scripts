@@ -130,11 +130,11 @@ return
 ;--------------------------------------------------------------------------------
 F_Pass()
 {
-send vtn
+send user
 sleep 5
 send `t
 sleep 5
-sendraw ittosadosadnici!2017Q1
+sendraw pass
 return
 }
 
